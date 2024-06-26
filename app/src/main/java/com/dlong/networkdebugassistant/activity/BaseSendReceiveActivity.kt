@@ -285,7 +285,11 @@ open class BaseSendReceiveActivity : BaseActivity() {
         }
         if (thread?.isAlive == true) {
 //            sendData(data.toByteArray())
-            sendData(ByteUtils.convertObjectToBytesByMarshalling(UdpRiverHead()))
+            if (config.isSendHex && config.isAutoAddHexCheck) {
+                sendData(ByteUtils.convertObjectToBytes(UdpRiverHead()))
+            } else {
+                sendData(ByteUtils.convertObjectToBytesByMarshalling(UdpRiverHead()))
+            }
             // 插入数据库
             viewModel.insertHistory(HistoryInfo(0, text, DateUtils.curTime))
         }
