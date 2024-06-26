@@ -7,18 +7,37 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.d10ng.stringlib.toHexString
-import com.dlong.dialog.*
 import com.d10ng.net.assistant.BaseNetThread
 import com.d10ng.net.assistant.OnNetThreadListener
+import com.d10ng.stringlib.toHexString
+import com.dlong.dialog.ButtonDialog
+import com.dlong.dialog.ButtonStyle
+import com.dlong.dialog.JustLoadDialog
+import com.dlong.dialog.addAction
+import com.dlong.dialog.create
+import com.dlong.dialog.setMsg
+import com.dlong.dialog.setTittle
+import com.dlong.dialog.show
+import com.dlong.dialog.startLoad
 import com.dlong.networkdebugassistant.R
 import com.dlong.networkdebugassistant.bean.BaseConfiguration
 import com.dlong.networkdebugassistant.bean.HistoryInfo
 import com.dlong.networkdebugassistant.bean.ReceiveInfo
+import com.dlong.networkdebugassistant.bean.UdpRiverHead
 import com.dlong.networkdebugassistant.databinding.ActivitySendReceiveBinding
 import com.dlong.networkdebugassistant.model.HistoryModel
-import com.dlong.networkdebugassistant.utils.*
-import kotlinx.coroutines.*
+import com.dlong.networkdebugassistant.utils.AppUtils
+import com.dlong.networkdebugassistant.utils.ByteUtils
+import com.dlong.networkdebugassistant.utils.DateUtils
+import com.dlong.networkdebugassistant.utils.NetUtils
+import com.dlong.networkdebugassistant.utils.StringUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 基本发送和接收页面
@@ -36,7 +55,7 @@ open class BaseSendReceiveActivity : BaseActivity() {
     protected var connectDialog: ButtonDialog? = null
     protected var disConnectDialog: JustLoadDialog? = null
 
-    companion object{
+    companion object {
         const val CHECK_THREAD_ALIVE = 1
         const val LOOP_SEND = 2
         const val RECEIVE_MSG = 11
@@ -170,7 +189,7 @@ open class BaseSendReceiveActivity : BaseActivity() {
 
     override fun callBack(msg: Message) {
         super.callBack(msg)
-        when(msg.what) {
+        when (msg.what) {
             CHECK_THREAD_ALIVE -> {
                 if (thread?.isAlive == true) {
                     mHandler.sendEmptyMessageDelayed(CHECK_THREAD_ALIVE, 100)
@@ -180,6 +199,7 @@ open class BaseSendReceiveActivity : BaseActivity() {
                     showToast(resources.getString(R.string.disconnect_success))
                 }
             }
+
             LOOP_SEND -> {
                 send(binding.btnSend)
             }
@@ -237,11 +257,11 @@ open class BaseSendReceiveActivity : BaseActivity() {
     }
 
     fun clean(view: View) {
-        when(view.id) {
+        when (view.id) {
             R.id.btn_send_clean -> binding.edtSend.setText("")
             R.id.btn_receive_clean -> {
                 binding.txtReceive.text = ""
-                binding.txtReceive.scrollTo(0,  0)
+                binding.txtReceive.scrollTo(0, 0)
             }
         }
     }
@@ -264,7 +284,8 @@ open class BaseSendReceiveActivity : BaseActivity() {
             data.add(ByteUtils.getEndNum(temp))
         }
         if (thread?.isAlive == true) {
-            sendData(data.toByteArray())
+//            sendData(data.toByteArray())
+            sendData(ByteUtils.convertObjectToBytesByMarshalling(UdpRiverHead()))
             // 插入数据库
             viewModel.insertHistory(HistoryInfo(0, text, DateUtils.curTime))
         }

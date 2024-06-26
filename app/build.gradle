@@ -9,7 +9,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.dlong.networkdebugassistant"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 33
         versionCode 7
         versionName "0.1.7"
@@ -115,6 +115,9 @@ dependencies {
 
     // 实体转换工具
     implementation 'com.github.D10NGYANG:JsonEntityManager:1.4'
+// https://mvnrepository.com/artifact/org.jboss.marshalling/jboss-marshalling-river
+//    implementation("org.jboss.marshalling:jboss-marshalling-river:2.1.4.Final")
+    implementation 'org.jboss.marshalling:jboss-marshalling:2.1.4.Final'
 
     // 字符串字节数据工具
     implementation 'com.github.D10NGYANG:DLStringUtil:1.7'
