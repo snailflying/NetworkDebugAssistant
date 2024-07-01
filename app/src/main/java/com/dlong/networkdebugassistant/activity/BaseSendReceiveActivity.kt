@@ -286,9 +286,15 @@ open class BaseSendReceiveActivity : BaseActivity() {
         if (thread?.isAlive == true) {
 //            sendData(data.toByteArray())
             if (config.isSendHex && config.isAutoAddHexCheck) {
-                sendData(ByteUtils.convertObjectToBytes(UdpRiverHead()))
+                val header = UdpRiverHead()
+                val byte = ByteUtils.convertObjectToBytes(header)
+                header.len = byte.size
+                sendData(ByteUtils.convertObjectToBytes(header))
             } else {
-                sendData(ByteUtils.convertObjectToBytesByMarshalling(UdpRiverHead()))
+                val header = UdpRiverHead()
+                val byte = ByteUtils.convertObjectToBytes(header)
+                header.len = byte.size
+                sendData(ByteUtils.convertObjectToBytesByMarshalling(header))
             }
             // 插入数据库
             viewModel.insertHistory(HistoryInfo(0, text, DateUtils.curTime))

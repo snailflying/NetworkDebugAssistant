@@ -1,6 +1,5 @@
 package com.dlong.networkdebugassistant.bean
 
-import com.dlong.jsonentitylib.annotation.DLField
 import java.io.Serializable
 
 /**
@@ -16,18 +15,15 @@ SleepCmd命令的type值为10；
 FlowDataCmd流速查询命令的type值为5；
 MsgCmd调试消息命令的type值为100；*/
 //WorkCmd，SleepCmd和FlowDataCmd消息，上位机只发消息头，以type值区分不同的消息。
-data class UdpRiverHead (
+data class UdpRiverHead(
 
     /** 本地端口 */
-    @DLField
     var cmd: Int = 9,
 
     /** 目标地址 */
-    @DLField
-    var len: Int = 0,
+    var len: Int? = null,
 
     /** 目标端口 */
-    @DLField
     var devtype: String = "ridar200"
 
 ) : Serializable {
